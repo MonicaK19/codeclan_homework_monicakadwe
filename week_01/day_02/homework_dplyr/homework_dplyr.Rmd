@@ -1,0 +1,151 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library (tidyverse)
+library (devtools)
+library (CodeClanData)
+library (readxl)
+```
+
+```{r}
+hw_dplyr <- read.csv("data/starbucks_drinkMenu_expanded.csv")
+```
+
+```{r}
+hw_dplyr
+```
+```{r}
+str(hw_dplyr)
+```
+```{r}
+
+hw_dplyr %>% 
+  select (Beverage_category,Beverage,Beverage_prep,Calories) %>% 
+  filter(!is.na(Calories))
+
+```
+```{r}
+mutate(hw_dplyr, calorie_diff = (Calories - 135), .after = Calories )
+```
+groupby(hw_dplyr)
+
+```{r}
+hw_dplyr %>% 
+summarise(mean(Calories))
+group_by(Beverage_category)
+
+```
+```{r}
+hw_dplyr %>% 
+group_by(Beverage_category) %>%
+summarise(Sum_Mean = mean(Calories))
+```
+```{r}
+hw_dplyr %>% 
+group_by(Beverage_category) %>%
+summarise(sum_mean =mean(Calories),count = n()) %>% 
+  arrange (desc(sum_mean))
+
+```
+
+```{r}
+hw_dplyr
+
+```
+
+```{r}
+hw_dplyr %>% 
+  group_by(Beverage_prep) %>% 
+summarise(Average_calorie = mean(Calories))
+```
+
+```{r}
+hw_dplyr
+
+```
+
+```{r}
+
+
+hw_dplyr %>% 
+  group_by(Beverage,Beverage_prep) %>% 
+   filter(Calories > mean(Calories))
+
+
+
+```
+```{r}
+hw_dplyr
+
+```
+
+```{r}
+hw_dplyr %>% 
+group_by(Beverage_category) %>%
+summarise(sum_mean =mean(Calories),count = n()) %>% 
+arrange (desc(sum_mean))
+
+
+```
+
+```{r}
+hw_dplyr %>% 
+  group_by(Beverage,Beverage_prep) %>% 
+   filter(Calories > mean(Calories))
+
+```
+
+```{r}
+hw_dplyr
+
+```
+
+```{r}
+bv_cat <- hw_dplyr %>% 
+  group_by(Beverage_category) %>% 
+  summarise (sum_cat = mean(Calories)) %>% 
+  arrange(desc(sum_cat))
+bv_cat1 <- head(bv_cat,3)
+bv_cat2 <- tail (bv_cat,3)
+summary(bv_cat)
+
+
+
+
+```
+
+```{r}
+
+hw_dplyr %>% 
+group_by(Beverage_prep) %>% 
+summarise(Average_calorie = mean(Calories))
+
+```
+
+```{r}
+
+  
+
+ 
+
+```
+
+```{r}
+hw_dplyr
+
+```
+
+```{r}
+hw_dplyr %>% 
+  group_by(Beverage) %>% 
+  filter(Calories <=5)
+```
+```{r}
+cal_mean <- mean(hw_dplyr$Calories)
+cal_mean
+filter(hw_dplyr,Calories> cal_mean)
+```
+
