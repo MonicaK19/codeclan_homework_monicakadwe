@@ -1,0 +1,115 @@
+--- title: "R Notebook" 
+output: html_notebook ---
+
+#loading library
+```{r} 
+library(tidyverse) 
+
+``` 
+
+#reading dataset 
+```{r} 
+movies_hw <-
+read_csv("data/movies.csv")
+movies_hw 
+``` 
+
+```{r} 
+names(movies_hw) 
+```
+
+```{r} 
+str(movies_hw) 
+```
+
+#Answer 1
+
+#have read the data #assigned it to the variable movies_hw 
+#original_title and title are almost same except one. Therefore we can have just one column saying film_title. 
+#revenue column has zero in few places. May  be the data is
+#unavailable/NA in that case
+
+#Answer 2
+
+#selecting three columns using pipe 
+
+```{r}
+movies_selected <- movies_hw %>%
+select(title,runtime,budget) 
+movies_selected 
+``` 
+
+#Answer 3
+#count number of missing values in each column 
+
+```{r}
+movies_hw %>%
+  summarise(count = sum(is.na(original_title), 
+                        is.na(title), 
+                        is.na(homepage), 
+                        is.na(budget),
+                        is.na(original_language), 
+                        is.na(overview), 
+                        is.na(popularity),
+                        is.na(release_date), 
+                        is.na(revenue), 
+                        is.na(runtime), 
+                        is.na(tagline),
+                        is.na(vote_average), 
+                        is.na(vote_count))) 
+```
+
+#Answer 4
+#replace 0 with NA for runtime column
+
+```{r}
+movies_runtime <- movies_hw %>% 
+  mutate(runtime = na_if(runtime,"0"))
+movies_runtime
+
+```
+```{r}
+movies_runtime %>% 
+  summarise(count = sum(is.na(runtime))) 
+```
+
+
+#Answer 5
+
+#replace median runtime using coalesce for runtime column
+
+```{r}
+movies_imputed <- movies_runtime%>% 
+  mutate (runtime = coalesce(runtime,median(runtime, na.rm = TRUE))) 
+movies_imputed
+
+``` 
+
+#counting NAs
+```{r} 
+movies_imputed %>% summarise (count = sum(is.na(runtime))) 
+
+```
+
+#Answer 6
+
+#slice_min for 10 shortest runtime
+```{r} 
+movies_imputed %>% slice_min(runtime,n = 10)
+
+```
+
+#slice_max for 10 shortest runtime
+
+```{r} 
+movies_imputed %>% slice_max(runtime, n=10)
+```
+
+#Answer 7
+
+```{r}
+movies_imputed %>% 
+  mutate (budget = if_else(budget<100000000,median(budget), budget, missing = NULL) )
+movies_imputed
+```
+
