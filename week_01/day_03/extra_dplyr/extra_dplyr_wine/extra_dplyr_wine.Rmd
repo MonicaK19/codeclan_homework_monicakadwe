@@ -1,0 +1,57 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+```
+
+```{r}
+extra_wine <- read_csv("data/wine_ratings.csv")
+```
+
+```{r}
+extra_wine
+```
+
+
+```{r}
+names(extra_wine)
+```
+
+```{r}
+wine_subset <- extra_wine %>% 
+  select(title, taster_name, points, price, country) %>% 
+  drop_na()
+  wine_subset
+  
+```
+
+```{r}
+wine_subset %>% 
+ select(country,points) %>% 
+  group_by(country) %>% 
+  summarise(mean_points = mean(points)) %>% 
+  slice_max(mean_points, n = 5)
+  
+```
+
+```{r}
+wine_subset %>% 
+  select(country, price) %>% 
+  group_by(country) %>% 
+  summarise(mean_price = mean(price)) %>% 
+  slice_min(mean_price, n = 5)
+  
+
+```
+
+```{r}
+
+taster_sample <- wine_subset %>% 
+  distinct(taster_name) %>% 
+  sample_n(5)
+  pull()
+```
+ 

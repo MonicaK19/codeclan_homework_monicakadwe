@@ -9,8 +9,7 @@ library(tidyverse)
 
 #reading dataset 
 ```{r} 
-movies_hw <-
-read_csv("data/movies.csv")
+movies_hw <- read_csv("data/movies.csv")
 movies_hw 
 ``` 
 
@@ -80,14 +79,14 @@ movies_runtime %>%
 
 ```{r}
 movies_imputed <- movies_runtime%>% 
-  mutate (runtime = coalesce(runtime,median(runtime, na.rm = TRUE))) 
+  mutate(runtime = coalesce(runtime, median(runtime, na.rm = TRUE))) 
 movies_imputed
 
 ``` 
 
 #counting NAs
 ```{r} 
-movies_imputed %>% summarise (count = sum(is.na(runtime))) 
+movies_imputed %>% summarise(count = sum(is.na(runtime))) 
 
 ```
 
@@ -95,21 +94,21 @@ movies_imputed %>% summarise (count = sum(is.na(runtime)))
 
 #slice_min for 10 shortest runtime
 ```{r} 
-movies_imputed %>% slice_min(runtime,n = 10)
+movies_imputed %>% slice_min(runtime, n = 10)
 
 ```
 
 #slice_max for 10 shortest runtime
 
 ```{r} 
-movies_imputed %>% slice_max(runtime, n=10)
+movies_imputed %>% slice_max(runtime, n = 10)
 ```
 
 #Answer 7
 
 ```{r}
 movies_imputed %>% 
-  mutate (budget = if_else(budget<100000000,median(budget), budget, missing = NULL) )
+  mutate(budget = if_else(budget < 100000000, median(budget), budget, missing = NULL))
 movies_imputed
 ```
 

@@ -1,0 +1,163 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+#load tidyverse
+
+library(tidyverse)
+```
+```{r}
+#reading the book data
+
+book_hw <- read_csv("data/books.csv")
+
+
+```
+```{r}
+#number of rows
+
+nrow(book_hw)
+```
+```{r}
+#number of observations
+
+ncol(book_hw)
+```
+```{r}
+#overall dimensions
+
+dim(book_hw)
+```
+
+```{r}
+#variable names
+
+names(book_hw)
+```
+
+```{r}
+#get an overview of the data
+
+glimpse(book_hw)
+```
+```{r}
+#look at the actual data in the table format
+
+view(book_hw)
+```
+
+```{r}
+#check for missing values
+
+sum(is.na(book_hw))
+
+```
+```{r}
+
+#displaying the table with changed variable name
+
+book_hw_new <- book_hw %>% 
+  select(everything()) %>% 
+  rename(book_id = bookID,
+         book_title = title,
+         book_author = authors,
+         total_pages = num_pages,
+         book_isbn = isbn,
+         book_isbn13 = isbn13,
+         book_publisher = publisher
+         ) %>% 
+  #change the eng to Eng using if_else
+  mutate(language_code = if_else(language_code =="eng", "Eng","Eng-US" ))
+book_hw_new
+  
+```
+
+```{r}
+#another way of changing eng to Eng using recode
+book_hw_new %>% 
+  select(language_code) %>% 
+  mutate(language_code = 
+           recode(
+             language_code,"eng" = "Eng",
+                           "en-US" = "Eng-US"
+                  )
+         )
+```
+
+
+```{r}
+#finding missing values in average_rating column
+
+book_hw_new %>% 
+  filter(is.na(average_rating)
+        )
+
+```
+```{r}
+book_hw_new_avgrating <- book_hw_new %>% 
+  mutate(average_rating = 
+           coalesce(
+             average_rating, mean(average_rating, na.rm = TRUE
+                                 )
+                    )
+         ) 
+book_hw_new_avgrating
+```
+
+```{r}
+#checking missing values after replacing NA values
+ sum(is.na(book_hw_new_avgrating$average_rating))
+
+```
+
+
+```{r}
+#group by rating and arranging by top ratings
+
+book_hw_new_avgrating %>% 
+  group_by(average_rating) %>% 
+  select(book_author,average_rating) %>% 
+  arrange(desc(average_rating)) %>% 
+  #slice_max(as.numeric(average_rating)) # why this is not working?????
+  top_n(5)
+```
+```{r}
+#display rows containing Harry Potter in the title
+
+book_hw_new_avgrating %>% 
+  filter(grepl('Harry Potter', book_title))
+  
+
+```
+```{r}
+#count the number of publishers by doing group by
+
+book_hw_new_avgrating %>% 
+  group_by(book_publisher) %>% 
+  #select(book_publisher, book_title) %>% 
+ count(book_publisher)
+```
+
+```{r}
+#display books as highly recommended or average
+book_hw_new_avgrating %>% 
+  mutate(book_recommendation = if_else(average_rating == 5.00, "highly recommended", "average")) 
+
+```
+```{r}
+#counting average rating of book_author by doing group by
+book_hw_new_avgrating %>% 
+  group_by(book_author) %>% 
+  select(book_author,average_rating) %>% 
+  summarise(count = n()) 
+  
+```
+
+```{r}
+
+book_hw_new_avgrating %>% 
+  select(average_rating)
+```
+
