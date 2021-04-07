@@ -36,7 +36,7 @@ ncol(rtweet)
 
 rtweet %>% 
   group_by(is_quote) %>% 
-  filter(is_quote == "FALSE") %>% 
+  filter(is_quote == FALSE) %>% #dont put quotes when the variable type is logical
   summarise (total = sum(favorite_count))
  
 ```
@@ -63,7 +63,7 @@ rtweet %>%
   group_by(source,is_quote) %>% 
   summarise(mean_source = mean(retweet_count)) %>% 
   ungroup() %>% 
-  filter (is_quote == "TRUE") 
+  filter (is_quote == "FALSE") 
 
 ```
 
