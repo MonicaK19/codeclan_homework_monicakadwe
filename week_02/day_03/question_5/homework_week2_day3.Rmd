@@ -1,0 +1,155 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+```{r}
+library(tidyverse)
+```
+```{r}
+#Question 1
+#Find the weather forecast for the next three days online. Create a list of lists in which each inner list should be labelled with the name of the day of the week. Each inner list should contain named elements telling you the temperature, chance of rain and wind speed.
+
+weather_forecast <- list(
+  "Thursday" = list(temperature = "9 degC", chance_of_rain = "69%", wind_speed = 20),
+  "Friday" = list(temperature = "8 degC", chance_of_rain = "21%", wind_speed = 11),
+  "Saturday" = list(temperature = "7 degC", chance_of_rain = "13%", wind_speed = 7)
+)
+
+weather_forecast
+
+```
+```{r}
+#Question 2
+#Using the list you’ve just made find:
+#The chance of rain tomorrow
+
+weather_forecast$Thursday$chance_of_rain
+
+```
+
+```{r}
+#Question 2
+#Using the list you’ve just made find:
+#The wind speed on the day after tomorrow
+
+weather_forecast$Friday$wind_speed
+
+```
+
+```{r}
+#Question 2
+#Using the list you’ve just made find:
+#The temperature tomorrow
+
+weather_forecast$Thursday$temperature
+
+```
+```{r}
+#Find a 14 day forecast online and create a matrix of the forecasts for temperature, where each week is one row and columns correspond to days.
+
+#creating matrix
+weather <- matrix(sample(1:10), nrow = 2, ncol = 7, byrow = TRUE)
+weather
+
+```
+```{r}
+#row names and column names
+
+rownames(weather)<- c("Week1", "Week2")
+colnames(weather) <- c(
+        "Monday", "Tuesday","Wednesday", "Thursday", "Friday","Saturday", "Sunday")
+weather
+```
+
+```{r}
+#The third day of the second week
+weather[2,3]
+
+```
+```{r}
+#The whole second week
+weather[2,]
+
+```
+
+```{r}
+#The first, third and fifth days in both weeks.
+
+weather[c(1,2),c(1,3,5)]
+
+
+```
+```{r}
+#Question 5
+#Write a function that pre-appends “The answer is:” to any character input, while for numeric input, it either just returns the number for numbers less than 10, or divides the number by 10 for numbers greater than 10. For anything else return “Invalid input”.
+library(stringr)
+
+any_value <- function(x){
+
+   if(is.numeric(x)){ 
+   if (x<10){
+      return(x)
+    }else{
+      n <- x/10
+      return(n)
+    }
+  
+    }else{
+      if(is.character(x)){
+        return(str_c("The answer is ",x))
+      }
+    }
+ return("invalid input")#not sure why this part is not executing
+}
+
+```
+
+```{r}
+any_value("m")
+undebug(any_value)
+```
+
+
+```{r}
+#abc <- function(y){
+#  if(y == "!"|"£"){
+#    return(str_c(y ," is an invalid input"))
+#  }
+#}
+```
+
+```{r}
+#abc("£")
+```
+
+```{r}
+#Question 6
+#Write a function which checks if two vectors have the same elements.
+
+#If they have the same elements in the same order, return “Exactly the same”
+#If they have the same elements but in a different order, return “The same”
+#If they don’t have the same elements, return “Different”.
+
+check_vector <- function(vec_1,vec_2){
+  if(all(vec_1 == vec_2)){
+    return("exact the same")
+  }else{
+    if(all(vec_1 %in% vec_2)){
+      return("the same")
+    }else{
+      return("Different")
+    }
+    
+  }
+  
+}
+vect_1 <- c(1,3,2,4)
+vect_2 <- c(1,2,3,4)
+
+mapply(check_vector,vec_1 = vect_1, vec_2 = vect_2)
+  
+```
+
+
+
+

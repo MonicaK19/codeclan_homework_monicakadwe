@@ -1,0 +1,61 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(stringr)
+library(tidyverse)
+```
+
+```{r}
+#Write a function that pre-appends “The answer is:” to any character input, while for numeric input, it either just returns the number for numbers less than 10, or divides the number by 10 for numbers greater than 10. For anything else return “Invalid input”.
+
+
+number_any <- function(x){
+#character_character <- "M"
+x1 <- 
+ if(is.numeric(x)){
+  if (x<10){
+  print(x)
+}else{
+  n <- x/10
+  print(n)
+}
+  
+}else{
+
+print("invalid input")
+}
+}
+
+```
+
+
+```{r}
+
+number_any("*")
+```
+
+
+```{r}
+
+any_value <- function(x){
+
+  value_r <- typeof(x)
+  return(value_r)
+}  
+   
+```
+
+```{r}
+any_value("$")
+```
+
+
+```{r}
+x <- 4
+typeof(x)
+```
+
+
