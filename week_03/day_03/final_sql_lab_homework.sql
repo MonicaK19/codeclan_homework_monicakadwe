@@ -301,13 +301,14 @@ abc.department,
 e.department, 
 abc.emp_count_deptwise_grade1,
 COUNT(e.id),
-SELECT(CONVERT(DECIMAL(10,2), abc.emp_count_deptwise_grade1/COUNT(e.id))) AS proportion 
-FROM employees AS e INNER JOIN
-abc
+abc.emp_count_deptwise_grade1/CAST(COUNT(e.id) AS REAL) AS proportion
+FROM employees AS e 
+INNER JOIN abc
 ON e.department = abc.department
 GROUP BY e.department,abc.department,abc.emp_count_deptwise_grade1
 
 
+/*abc.emp_count_deptwise_grade1/CAST(COUNT(e.id) AS REAL) AS proportion */
 
 
 
