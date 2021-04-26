@@ -1,0 +1,107 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+#Question 1.
+#Load in the libraries you need, and look at the backpack data. Take note of variable names and dimensions.
+
+library(tidyverse)
+library(CodeClanData)
+```
+
+```{r}
+backpack
+```
+```{r}
+#Question 2.
+#What is the distribution of backpack weights that students are carrying? Choose an appropriate graph to show the distribution.
+
+backpack %>% 
+  ggplot()+
+  aes(x = backpack_weight, y = units, colour = sex)+
+  geom_point()+
+  scale_x_continuous(breaks = c(5,10,15,20,25,30,35,40,45))+
+  ylim(0,20)+
+  labs(
+    x = "Units",
+    y = "Backpack Weight",
+    title = "Distribution of Backpack Weights"
+  )+
+  geom_smooth()
+  
+
+```
+
+
+```{r}
+#Question 3.
+#Are there differences in backpack weight between sex?
+
+library(ggplot2)
+backpack %>% 
+  ggplot()+
+  aes(x = units, y = backpack_weight)+
+  geom_bar(stat = "identity",aes(fill = sex), position = "dodge")+
+  scale_x_continuous(breaks = c(0:20))
+
+
+
+```
+
+```{r}
+#Question 4.
+#What is the relationship between body weight and backpack weight?
+
+backpack %>% 
+  ggplot()+
+  aes(x = backpack_weight, y = body_weight)+
+  geom_point()+
+  geom_line(colour = "red")
+  
+```
+
+
+```{r}
+#Question 5.
+#Is this relationship different between men and women? Choose an appropriate plot and interpret your findings.
+
+
+backpack %>% 
+  ggplot()+
+  aes(x = backpack_weight, y = body_weight, colour = sex)+
+  geom_point(size= 3,alpha = 0.5)+
+  geom_line(colour = "black")
+  facet_wrap(~sex)
+```
+
+
+
+```{r}
+#Question 6.
+#What proportion of students report back pain?
+
+backpack %>% 
+  ggplot() +
+  aes(y= ratio, x = back_problems)+
+  geom_point()
+  
+  
+  
+```
+
+
+```{r}
+#Question 7.
+#Is this proportion different between men and women?
+
+```
+
+
+```{r}
+#Question 8.
+#Now you’ve investigated your data separately, create plots to describe the relationship between backpack weight, body weight, gender and reported backpain.
+#Try both backpack_weight and body_weight as well as the ratio.
+```
+
