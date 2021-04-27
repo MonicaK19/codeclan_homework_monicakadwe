@@ -57,8 +57,8 @@ backpack %>%
 backpack %>% 
   ggplot()+
   aes(x = backpack_weight, y = body_weight)+
-  geom_point()+
-  geom_line(colour = "red")
+  geom_point()
+  #geom_line(colour = "red")
   
 ```
 

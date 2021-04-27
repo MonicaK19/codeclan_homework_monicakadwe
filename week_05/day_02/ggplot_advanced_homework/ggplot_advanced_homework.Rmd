@@ -1,0 +1,177 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(CodeClanData)
+library(tidyverse)
+library(lubridate)
+col_scheme <- c("#E89FE9", "#50434F", "#B6A7B5", "#F9A472", "#BD7040")
+```
+#4 MVP
+##4.1 Part 1
+
+```{r}
+qb_revenue_breakdown
+
+```
+###Take the data in the dataset qb_revenue_breakdown and make a stacked bar chart showing the sources of revenue across the two years in the dataset.
+
+```{r}
+library(wesanderson)
+qb_revenue_breakdown %>% 
+  janitor::clean_names() %>% 
+  ggplot()+
+  aes(x = year, y = revenue, fill = product)+
+  geom_col(width = 0.5)+
+  labs(
+    x = "Year\n",
+    y = "Revenue",
+    title = "Sources of Revenue",
+    subtitle = "(2018-2019)\n",
+    fill = "Product"
+  ) +
+  scale_y_continuous(breaks = c(5000,10000,15000,20000,25000,30000))+
+  scale_fill_manual(values =col_scheme)+
+  theme_minimal()+
+  theme(axis.text = element_text(size = 12))
+ 
+  
+  
+  
+```
+###Make a line chart showing monthly sales of the “flagship product” - the ‘KwikBit Unit 1’ - over the last year. This data is inside qb_monthly_sales, but you will need to use filter() or subset() (base R).
+
+
+
+```{r}
+qb_monthly_sales %>% 
+  janitor::clean_names() %>% 
+    filter(cashflow == "Kwikbit Unit 1 Sales" )
+```
+
+```{r}
+qb_monthly_sales %>% 
+  janitor::clean_names() %>% 
+    filter(cashflow == "Kwikbit Unit 1 Sales" ) %>% 
+  #filter(date >= "2019-01-01" & date <= "2019-12-31") %>% 
+  ggplot()+
+  aes(x = date, y = amount, colour = cashflow)+
+  geom_point(width = 0.5, colour = "blue")+
+  geom_line()+
+   labs(
+    x = "Date\n",
+    y = "Amount",
+    title = "KwikBit Unit 1 - Sales",
+    subtitle = "(2018-2019)\n",
+    fill = "Cashflow"
+  )+
+ # scale_x_discrete(labels = c("Aug18", "Sep18", "Oct18", "Nov18", "Dec18", "Jan19", "Feb19","Mar19","April19", "May19", "June19", "July19"))+
+ # scale_fill_manual(values = col_scheme)+
+  theme_classic()+
+  theme(axis.text = element_text(size = 12))
+
+```
+
+###Make a line chart showing monthly revenue and costs over the last year. This data is also in qb_monthly_sales.
+
+
+```{r}
+qb_monthly_sales %>% 
+  janitor::clean_names() %>% 
+  filter(cashflow %in% c("Total Revenue", "Cost")) %>% 
+  group_by(date, cashflow) %>% 
+  summarise(monthly_revenue = sum(amount)) %>% 
+  ggplot()+
+  aes(x = date, y = monthly_revenue, colour = cashflow)+
+  geom_line()+
+  labs(
+    x = "Date\n",
+    y = "Monthly Revenue",
+    fill = "Cashflow"
+  )+
+ # scale_x_discrete(labels = c("Aug18", "Sep18", "Oct18", "Nov18", "Dec18", "Jan19", "Feb19","Mar19","April19", "May19", "June19", "July19"))+
+ # scale_fill_manual(values = col_scheme)+
+  theme_classic()+
+  theme(axis.text = element_text(size = 12))
+
+
+```
+
+###Show annual sales of personal fitness trackers over the last 5 years broken down by company as a ribbon plot (use geom_area). This data is in qb_competitors.
+```{r}
+qb_competitors
+```
+```{r}
+
+qb_competitors %>% 
+  janitor::clean_names() %>% 
+  ggplot()+
+  aes(x = year, y = revenue, fill = company)+
+  geom_area()+
+  facet_wrap(~company)
+
+
+  
+```
+
+###Now show the sales from the four competitors as a line graph. Include an extra layer that shows the data points used to make the lines.
+
+```{r}
+qb_competitors %>% 
+  janitor::clean_names() %>% 
+  group_by(company,year) %>% 
+  summarise(revenue_sum = sum(revenue)) %>% 
+  ggplot()+
+  aes(x = year, y = revenue_sum, colour = company )+
+  geom_line(stat = "identity")+
+  geom_point()
+```
+###Now the company wants to compare the number of steps that their device counts vs. their competitors. Make a line graph of the number of steps throughout time, and use faceting to compare between companies and people. The data for this is in qb_device_data.
+
+```{r}
+qb_device_data
+names(qb_device_data)
+ncol(qb_device_data)
+```
+
+```{r}
+qb_device_data %>% 
+ group_by(device, id) %>% 
+ summarise(steps = sum(counts)) %>% 
+ggplot()+
+ aes(x = device, y = steps)+
+ geom_bar(stat = "identity")+
+facet_wrap(~device ~id)
+
+```
+
+```{r}
+qb_device_data %>% 
+  unite("time", hours:mins, sep = ".") %>% 
+  ggplot() +
+  aes(x = time ,y = counts)+
+    geom_line()
+```
+
+
+
+```{r}
+qb_device_data %>% 
+  mutate(time = (hours* 60) + mins) %>% 
+  ggplot ()+
+  aes(x = time, y = counts)+
+  geom_line()+
+  facet_grid(~device ~id)
+```
+
+```{r}
+
+```
+
+
+```{r}
+
+```
+
