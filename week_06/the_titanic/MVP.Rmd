@@ -1,0 +1,92 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(prob)
+```
+
+1. If I roll a six-sided dice once, what is the probability of getting a number less than 5?
+```{r}
+
+rd %>% 
+  filter(X1<5) %>% 
+  summarise(prob = n()/nrow(rd))
+```
+
+2. How many outcomes are there in the sample space of an experiment in which we toss three dice?
+
+```{r}
+rolldie(3) %>% 
+  nrow()
+```
+
+3. In an experiment where we roll four dice:
+
+how many outcomes are in the event total_equals_5_6_7 (i.e. the total of the four dice equals 5, 6 or 7)?
+what is the probability of this event?
+what assumptions do we apply in answering part ii?
+```{r}
+die_event <- rolldie(4)
+```
+
+```{r}
+die_event %>% 
+  mutate(total = rowSums(die_event)) %>% 
+  filter(total %in% c(5,6,7)) %>% 
+  summarise(prob = n()/nrow(die_event))
+
+```
+4. Five chairs are placed in a row in a room, along with five people of differing height. The people sit down randomly on the chairs. What is the probability that they sit in order of decreasing height, left to right?
+
+```{r}
+people <- c("h1", "h2","h3", "h4", "h5")
+
+people_order <- 
+   permutations(
+  n = 5,
+  r = 5, 
+  v = people,
+  repeats.allowed = FALSE
+)
+dim(people_order)
+
+
+```
+
+```{r}
+
+
+
+people_order <- as_tibble(
+   permutations(
+  n = 5,
+  r = 5, 
+  v = people,
+  repeats.allowed = FALSE
+))
+
+
+nrow(people_order)
+class(people_order)
+
+```
+
+
+```{r}
+people <- c("5", "6","4", "3", "2")
+people
+```
+
+5. I roll six dice:
+
+what is the probability I see the numbers 6, 5, 4, 3, 2 and 1 in order on the dice, left to right?
+what is the probability I see one each of the numbers 6, 5, 4, 3, 2 and 1 on the dice regardless of order?
+[Hint have a look at the isin() function in the prob package. For example, to filter all rows containing 6, 1, 2 in that order, you could use isin(., c(6, 1, 2), ordered = TRUE)]
+```{r}
+rolldie(6)
+
+```
+

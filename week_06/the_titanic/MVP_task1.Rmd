@@ -1,0 +1,133 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(prob)
+library(gtools)
+library(tidyverse)
+`%!in%` <- Negate(`%in%`)
+```
+
+```{r}
+titanic_data <- read_csv("data/titanic.csv")
+```
+
+```{r}
+titanic_data
+```
+```{r}
+tt_data_both <- titanic_data %>% 
+  mutate(crew = ifelse(class %in% c("1st","2nd","3rd"),T, F)) %>% 
+  select(class,crew,survived)
+tt_data_both
+nrow(tt_data_both)
+```
+
+
+
+
+#probability of crew
+
+```{r}
+prob_crew <- titanic_data %>% 
+  filter(class %in% c("1st","2nd","3rd")) %>% 
+  summarise(prob = n()/nrow(titanic_data))
+
+prob_crew
+```
+#probability of passenger
+
+```{r}
+prob_pass <- titanic_data %>% 
+  filter(class %!in% c("1st","2nd","3rd")) %>% 
+  summarise(prob = n()/nrow(titanic_data))
+
+prob_pass
+```
+
+#extract survived passengers and crew
+
+```{r}
+tt_data_survived <- titanic_data %>% 
+  filter(survived == "yes") %>% 
+  mutate(crew = ifelse(class %in% c("1st","2nd","3rd"),"TRUE", "FALSE")) %>% 
+  select(class,crew)
+tt_data_survived
+nrow(tt_data_survived)
+```
+
+#probability of survived and  passenger
+```{r}
+prob_survived_pass <- tt_data_survived %>% 
+  filter(class %in% c("1st", "2nd", "3rd")) %>% 
+  summarise(prob = n()/nrow(tt_data_survived))
+prob_survived_pass 
+```
+
+
+#probability of the survived and crew
+```{r}
+prob_survived_crew <- tt_data_survived %>% 
+  filter(class %!in% c("1st", "2nd", "3rd")) %>% 
+  summarise(prob = n()/nrow(tt_data_survived))
+
+prob_survived_crew 
+```
+
+
+```{r}
+table <- tt_data_survived %>%
+  janitor::tabyl(class, crew)
+
+table
+```
+
+```{r}
+table <- table %>%
+  janitor::adorn_totals(where = c("row", "col"))
+
+table
+```
+
+```{r}
+table <- table %>%
+  janitor::adorn_percentages(denominator = "all") %>% 
+  janitor::adorn_title()
+
+table
+```
+
+
+
+
+#calculate the conditional probabilities prob( survived ∣ crew ) 
+#P(S|C) = P(SnC)/P(C)
+
+```{r}
+tt_data_both
+prob_sur_given_crew <-  tt_data_both %>%
+  filter(class %!in% c("1st", "2nd", "3rd")& survived == "yes") %>%
+  summarise(prob = sum(crew)/n())
+
+prob_sur_given_crew
+```
+
+#calculate the conditional probabilities prob( survived ∣ crew ) 
+#P(S|C) = P(SnC)/P(C)
+
+```{r}
+tt_data_both
+prob_sur_given_pass <-  tt_data_both %>%
+  filter(class %in% c("1st", "2nd", "3rd")) %>%
+  summarise(as.decimal(prob = sum(crew == TRUE)/n()))
+
+prob_sur_given_pass
+```
+
+
+
+
+
+
