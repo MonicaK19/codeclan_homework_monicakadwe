@@ -6,7 +6,8 @@ library(shinythemes)
 
 ui <- fluidPage(
   theme = shinytheme("slate"),
-  titlePanel (tags$b((tags$u("Five Country Medal Comparison(Mini Lab)")))),
+  titlePanel (tags$b((tags$u("Five Country Medal Comparison(Mini Lab)\n")))),
+ #br(),br(),
   tabsetPanel(
     
     tabPanel("SEASON",

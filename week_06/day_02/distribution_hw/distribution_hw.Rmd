@@ -1,0 +1,102 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(janitor)
+library(MASS)
+```
+#1.1 Question 1
+##Load the data, clean_names() and explore it.
+
+```{r}
+dist <- read_csv("data/20190928-items.csv") %>% 
+  clean_names()
+
+dist
+```
+
+
+
+```{r}
+samsung_ratings <- dist %>% 
+  filter(brand == "Samsung") %>% 
+  arrange(rating)
+samsung_ratings
+```
+
+#1.2 Question 2
+##Find the brand with the highest numbers of phones in the dataset.
+
+```{r}
+
+dist %>% 
+  group_by(brand) %>% 
+  summarise(count = n()) %>% 
+  arrange(desc(count)) %>% 
+  head(1)
+
+```
+
+#1.3 Question 3
+##For your top brand, plot the distribution of phone ratings as a probability density, overlaying a fitted normal distribution. Do you think the normal distribution provides a good model of these ratings?
+
+###[Hint - you will need to calculate the mean() and sd() of the ratings to plot the appropriate normal. Alternatively, investigate using the fitdistr() function in the MASS package]
+
+```{r}
+samsung_stat <- dist %>% 
+ filter(brand == "Samsung") %>% 
+    summarise(
+    num = n(),
+    mean = mean(rating),
+    sd = sd(rating))
+samsung_stat
+
+```
+
+```{r}
+
+dist %>% 
+  filter(brand == "Samsung") %>%
+  ggplot(aes(x = rating)) +
+  geom_histogram(aes(y = ..density..), col = "white", bins = 25) +
+  stat_function(
+    fun = dnorm, 
+    args = list(
+      mean = samsung_stat$mean, 
+      sd = samsung_stat$sd
+    ),
+    col = "red"
+  )
+  
+```
+
+# Question 4
+##We can be more quantitative in comparing the distribution of top brand ratings with a normal distribution. You calculated the mean() and sd() of your distribution in an earlier question. Use these values to calculate the proportions of ratings within one-, two- and three standard deviations of the mean. Compare these proportions with those you expect for a normal distribution.
+
+###Hint
+###Further hint - code to filter within one SD
+
+```{r}
+samsung_ratings %>%
+  filter(rating >= samsung_stat$mean - samsung_stat$sd) %>%
+  filter(rating <= samsung_stat$mean + samsung_stat$sd) %>%
+  summarise(prop_within_1sd = n() / nrow(samsung_ratings))
+```
+```{r}
+samsung_ratings %>%
+  filter(rating >= samsung_stat$mean - (2*samsung_stat$sd)) %>%
+  filter(rating <= samsung_stat$mean + (2*samsung_stat$sd)) %>%
+  summarise(prop_within_2sd = n() / nrow(samsung_ratings))
+```
+
+```{r}
+samsung_ratings %>%
+  filter(rating >= samsung_stat$mean - (3*samsung_stat$sd)) %>%
+  filter(rating <= samsung_stat$mean + (3*samsung_stat$sd)) %>%
+  summarise(prop_within_3sd = n() / nrow(samsung_ratings))
+```
+

@@ -67,6 +67,7 @@ qb_monthly_sales %>%
     subtitle = "(2018-2019)\n",
     fill = "Cashflow"
   )+
+  scale_colour_manual(values = col_scheme)+
  # scale_x_discrete(labels = c("Aug18", "Sep18", "Oct18", "Nov18", "Dec18", "Jan19", "Feb19","Mar19","April19", "May19", "June19", "July19"))+
  # scale_fill_manual(values = col_scheme)+
   theme_classic()+
@@ -91,6 +92,7 @@ qb_monthly_sales %>%
     y = "Monthly Revenue",
     fill = "Cashflow"
   )+
+   scale_colour_manual(values = col_scheme)+
  # scale_x_discrete(labels = c("Aug18", "Sep18", "Oct18", "Nov18", "Dec18", "Jan19", "Feb19","Mar19","April19", "May19", "June19", "July19"))+
  # scale_fill_manual(values = col_scheme)+
   theme_classic()+

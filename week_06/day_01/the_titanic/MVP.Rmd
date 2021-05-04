@@ -11,9 +11,10 @@ library(prob)
 1. If I roll a six-sided dice once, what is the probability of getting a number less than 5?
 ```{r}
 
-rd %>% 
+rd %>% rolldie(6) %>% 
   filter(X1<5) %>% 
   summarise(prob = n()/nrow(rd))
+rd
 ```
 
 2. How many outcomes are there in the sample space of an experiment in which we toss three dice?

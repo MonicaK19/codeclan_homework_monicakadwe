@@ -12,6 +12,7 @@ library(tidyverse)
 
 ```{r}
 titanic_data <- read_csv("data/titanic.csv")
+titanic_data
 ```
 
 ```{r}
@@ -19,10 +20,11 @@ titanic_data
 ```
 ```{r}
 tt_data_both <- titanic_data %>% 
-  mutate(crew = ifelse(class %in% c("1st","2nd","3rd"),T, F)) %>% 
+  mutate(crew = ifelse(class %in% c("1st","2nd","3rd"),FALSE, TRUE)) %>% 
   select(class,crew,survived)
 tt_data_both
 nrow(tt_data_both)
+tt_data_both %>% count(crew)
 ```
 
 
@@ -31,31 +33,29 @@ nrow(tt_data_both)
 #probability of crew
 
 ```{r}
-prob_crew <- titanic_data %>% 
-  filter(class %in% c("1st","2nd","3rd")) %>% 
-  summarise(prob = n()/nrow(titanic_data))
+prob_crew <- tt_data_both %>% 
+  filter(crew == TRUE) %>% 
+  summarise(prob = n()/nrow(tt_data_both))
 
 prob_crew
 ```
 #probability of passenger
 
 ```{r}
-prob_pass <- titanic_data %>% 
-  filter(class %!in% c("1st","2nd","3rd")) %>% 
+prob_pass <- tt_data_both %>% 
+  filter(crew == FALSE) %>% 
   summarise(prob = n()/nrow(titanic_data))
 
 prob_pass
 ```
 
-#extract survived passengers and crew
+#extract survived passengers and crew - important
 
 ```{r}
-tt_data_survived <- titanic_data %>% 
-  filter(survived == "yes") %>% 
-  mutate(crew = ifelse(class %in% c("1st","2nd","3rd"),"TRUE", "FALSE")) %>% 
-  select(class,crew)
-tt_data_survived
-nrow(tt_data_survived)
+tt_survive_crew_prob <- tt_data_both %>% 
+  filter(survived == "yes", crew == TRUE) %>% 
+  summarise(prob = n()/nrow(tt_data_both))
+tt_survive_crew_prob
 ```
 
 #probability of survived and  passenger
@@ -108,7 +108,7 @@ table
 ```{r}
 tt_data_both
 prob_sur_given_crew <-  tt_data_both %>%
-  filter(class %!in% c("1st", "2nd", "3rd")& survived == "yes") %>%
+  filter(class %!in% c("1st", "2nd", "3rd")) %>%
   summarise(prob = sum(crew)/n())
 
 prob_sur_given_crew
