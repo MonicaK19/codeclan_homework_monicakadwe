@@ -1,0 +1,203 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(fastDummies)
+library(ggfortify)
+```
+
+#Load the diamonds.csv data set and undertake an initial exploration of the data. You will find a description of the meanings of the variables on the relevant Kaggle page
+
+```{r}
+diamonds <- read_csv("data/diamonds.csv")
+diamonds
+```
+<br>
+#We expect the carat of the diamonds to be strong correlated with the physical dimensions x, y and z. Use ggpairs() to investigate correlations between these four variables.
+
+```{r}
+alias(lm(carat ~ ., data = diamonds))
+```
+<br>
+```{r}
+library(GGally)
+```
+```{r}
+ggpairs(diamonds, column =  c("carat", "x", "y", "z"), progress = FALSE)
+```
+
+Response variable is carat. Predictors are x, y and z. We see that the correlation is very strong because the correlation coefficient is 0.95.
+
+<br>
+
+#So, we do find significant correlations. Let’s drop columns x, y and z from the dataset, in preparation to use only carat going forward.
+
+```{r}
+diamonds_new <- diamonds %>% 
+  select(-c("x", "y", "z"))
+
+diamonds_new
+```
+
+#We are interested in developing a regression model for the price of a diamond in terms of the possible predictor variables in the dataset.
+
+##Use ggpairs() to investigate correlations between price and the predictors (this may take a while to run, don’t worry, make coffee or something).
+
+
+```{r}
+ggpairs(diamonds_new, progress = FALSE)
+```
+Carat - predictor variable
+Price - response variable
+
+Found a strong positive correlation between carat and price.
+
+##Perform further ggplot visualisations of any significant correlations you find.
+
+```{r}
+diamonds_new %>% 
+  ggplot(aes(x = carat, y = price))+
+  geom_point()
+```
+
+#Shortly we may try a regression fit using one or more of the categorical predictors cut, clarity and color, so let’s investigate these predictors:
+
+
+#Investigate the factor levels of these predictors. How many dummy variables do you expect for each of them?
+
+#Use the dummy_cols() function in the fastDummies package to generate dummies for these predictors and check the number of dummies in each case.
+
+CREATING DUMMY VARIABLES FOR CUT,CLARITY AND COLOR
+
+```{r}
+unique(diamonds_new$cut)
+```
+Fair - 1
+Good - 2
+Very Good - 3
+Premium - 4
+Ideal - 5
+
+```{r}
+diamonds_new <- diamonds_new %>% 
+  mutate(
+    cut = case_when(cut == "Fair" ~1,
+                    cut == "Good" ~2,
+                    cut == "Very Good" ~3,
+                    cut == "Premium" ~4,
+                    cut == "Ideal" ~5)
+  )
+diamonds_new
+```
+
+```{r}
+unique(diamonds_new$clarity)
+```
+```{r}
+diamonds_new1 <- diamonds_new %>% 
+  dummy_cols(
+    select_columns = "clarity",
+    remove_first_dummy = TRUE,
+    remove_selected_columns = TRUE
+  )
+
+diamonds_new1
+```
+
+For clarity, we created 7 dummy variables
+
+
+```{r}
+unique(diamonds_new1$color)
+```
+```{r}
+diamonds_new2 <- diamonds_new1 %>% 
+  dummy_cols(
+    select_columns = "color",
+    remove_first_dummy = TRUE,
+    remove_selected_columns = TRUE
+  )
+
+diamonds_new2
+```
+
+ For color, we created 6 dummy variables
+ 
+
+#Start with simple linear regression. Regress price on carat and check the regression diagnostics.
+
+lets find model with the above explanatory variable
+
+```{r}
+model1 <- lm(price ~ carat, data = diamonds_new2)
+model1
+```
+
+```{r}
+autoplot(model1)
+```
+
+
+
+```{r}
+summary(model1)
+```
+How much explaining is the model doing?
+
+85% of variation in price is explained by carat(x variable)
+For every 1 carat weight increase , the price will increase by 7756 dollars, however all other variables are constant
+
+
+#Add another predictor of your choice. Check your assumptions, diagnostics, and interpret the model.
+
+Predictor = cut
+
+```{r}
+diamonds_new2
+```
+
+```{r}
+model2 <- lm(price ~ carat + cut, data = diamonds_new2)
+model2
+```
+```{r}
+summary(model2)
+```
+How much explaining is the model doing?
+
+85% of variation in price is explained by cut(x variable)
+
+```{r}
+names(diamonds_new2)
+```
+
+
+```{r}
+model3 <- lm(price ~ carat + clarity_IF + clarity_SI1 + clarity_SI2 + clarity_VS1 + clarity_VS2 + clarity_VVS1 +  clarity_VVS2, data = diamonds_new2)
+
+model3
+```
+
+
+```{r}
+autoplot(model3)
+```
+
+```{r}
+summary(model3)
+```
+
+
+```{r}
+model4 <- lm(price ~ carat + clarity_IF + clarity_SI1 + clarity_SI2 + clarity_VS1 + clarity_VS2 + clarity_VVS1 +  clarity_VVS2+ color_E+ color_F + color_G + color_H + color_I + color_J, data = diamonds_new2)
+
+```
+
+```{r}
+summary(model4)
+```
+
+It is determined that clarity and colour variables are statistically significant. 
