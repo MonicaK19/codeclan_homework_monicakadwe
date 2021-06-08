@@ -1,0 +1,80 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library (tidyverse)
+library(GGally)
+```
+
+
+LOADING THE DATASET
+
+```{r}
+king_county <- read_csv("data/kc_house_data.csv")
+
+king_county
+```
+
+Tidy up the data ready for regression:
+
+* You might like to think about removing some or all of `date`, `id`, `sqft_living15`, `sqft_lot15` and `zipcode` (`lat` and `long` provide a better measure of location in any event).
+
+```{r}
+king_county_tidy <- king_county %>% 
+  
+  select(-c("date", "id", "sqft_living15", "sqft_lot15", "zipcode"))
+
+king_county_tidy
+
+```
+
+Have a think about how to treat `waterfront`. Should we convert its type?
+
+```{r}
+unique(king_county_tidy$waterfront)
+
+```
+
+We converted `yr_renovated` into a `renovated` logical variable, indicating whether the property had ever been renovated. You may wish to do the same.
+
+```{r}
+king_county_tidy <- king_county_tidy %>% 
+  mutate(yr_renovated = ifelse(yr_renovated == 0, TRUE, FALSE))
+
+king_county_tidy
+```
+
+Have a think about how to treat `condition` and `grade`? Are they interval or categorical ordinal data types?
+
+```{r}
+unique(king_county_tidy$grade)
+```
+
+Question 2
+Check for aliased variables using the alias() function (this takes in a formula object and a data set). [Hint - formula price ~ . says ‘price varying with all predictors’, this is a suitable input to alias()]. Remove variables that lead to an alias. Check the ‘Elements of multiple regression’ lesson for a dropdown containing further information on finding aliased variables in a dataset.
+
+```{r}
+alias(lm(price ~., data = king_county_tidy))
+```
+
+
+
+```{r}
+king_county_numeric <- king_county_tidy %>%
+  select_if(is.numeric)
+
+king_county_numeric
+
+king_county__nonnumeric <- king_county_tidy %>%
+  select_if(function(x)!is.numeric(x))
+
+king_county__nonnumeric 
+
+king_county_nonnumeric$price <- king_county_tidy$price
+
+ggpairs(king_county_numeric)
+ggpairs(king_county_nonnumeric)
+```
+
