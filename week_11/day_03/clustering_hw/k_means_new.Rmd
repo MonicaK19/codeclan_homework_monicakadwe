@@ -1,0 +1,103 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Clustering homework
+
+You have been provided some customer data from a shopping centre. Do some exploratory analysis on the data. Comment on findings.
+
+We are interested in creating a marketing campaign to target customers based on their spending score and annual income. Perform a k-means clustering to find if there are meaningful clusters in the data to target the customers.
+
+Perform k-means clustering and chose a value of k.
+
+Visualise the clustering for your chosen value of k.
+
+Do you think the clustering seems a good fit for this data?
+
+Comment on the attributes on one or two of the clusters (maybe even give them a label if you like - like in section 4.1 of the ‘Segmentation & clustering intro’ lesson).
+
+```{r}
+library(janitor)
+library(fastDummies)
+library(broom)
+library(tidyverse)
+library(factoextra)
+```
+
+```{r}
+customers <- read_csv("data/mall_customers.csv") %>% 
+  clean_names()
+customers
+```
+
+```{r}
+customers1 <- customers %>% 
+  select(annual_income_k, spending_score_1_100)
+
+customers1
+```
+
+# The nstart parameter indicates that we want the algorithm to be executed 20 times.
+# This number is not the number of iterations, it is like calling the function 20 times and then
+# the execution with lower variance within the groups will be selected as the final result.
+
+```{r}
+clustering <- kmeans(customers1, centers = 5, nstart = 20)
+
+clustering
+```
+
+The kmeans() function outputs the results of the clustering. We can see the centroid vectors (cluster means), the group in which each observation was allocated (clustering vector) and a percentage (83.5%) that represents the compactness of the clustering, that is, how similar are the members within the same group. 
+
+Since we know that, we will use that percentage to help us decide our K value, that is, a number of groups that will have satisfactory variance and compactness.
+
+The function below plots a chart showing the “within sum of squares” (withinss) by the number of groups (K value) chosen for several executions of the algorithm. The within sum of squares is a metric that shows how dissimilar are the members of a group., the greater is the sum, the greater is the dissimilarity within a group.
+
+
+
+```{r}
+options(scipen = 999)
+fviz_nbclust(customers1, 
+             kmeans, 
+             method = "wss", 
+             nstart = 25)
+
+```
+
+K=3 to k=2 is a big difference in the sum of squares. That means that when it passes from 3 to 2 groups there is a reduction in the clustering compactness (by compactness, I mean the similarity within a group). Our goal, however, is not to achieve compactness of 100% — for that, we would just take each observation as a group. The main purpose is to find a fair number of groups that could explain satisfactorily a considerable part of the data.
+
+
+Clustering Validation
+
+```{r}
+library(cluster)
+library(factoextra)
+
+sil <- silhouette(clustering$cluster, dist(customers1))
+fviz_silhouette(sil)
+```
+
+
+```{r}
+fviz_nbclust(customers1, kmeans, method = "silhouette", nstart = 25)
+```
+The silhouette coefficient is calculated as follows:
+For each observation i, it calculates the average dissimilarity between i and all the other points within the same cluster which i belongs. Let’s call this average dissimilarity “Di”.
+Now we do the same dissimilarity calculation between i and all the other clusters and get the lowest value among them. That is, we find the dissimilarity between i and the cluster that is closest to i right after its own cluster. Let’s call that value “Ci”
+The silhouette (Si) width is the difference between Ci and Di (Ci — Di) divided by the greatest of those two values (max(Di, Ci)).
+Si = (Ci — Di) / max(Di, Ci)
+So, the interpretation of the silhouette width is the following:
+Si > 0 means that the observation is well clustered. The closest it is to 1, the best it is clustered.
+Si < 0 means that the observation was placed in the wrong cluster.
+Si = 0 means that the observation is between two clusters.
+The silhouette plot below gives us evidence that our clustering using four groups is good because there’s no negative silhouette width and most of the values are bigger than 0.55.
+
+
+Gap statistic
+
+```{r}
+fviz_nbclust(customers1, kmeans, method = "gap_stat") #would put nstart = 25 if had more computing power
+```
+
+
