@@ -1,6 +1,9 @@
 ---
 title: "R Notebook"
-output: html_notebook
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
 ---
 
 Clustering homework
@@ -100,4 +103,11 @@ Gap statistic
 fviz_nbclust(customers1, kmeans, method = "gap_stat") #would put nstart = 25 if had more computing power
 ```
 
+```{r}
+
+clusters <- augment(clustered_customers1, customers1)
+
+ggplot(clusters, aes(spending_score_1_100, annual_income_k, colour = .cluster)) +
+  geom_point() 
+```
 

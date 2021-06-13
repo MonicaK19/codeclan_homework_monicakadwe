@@ -75,7 +75,7 @@ fviz_nbclust(customers1, kmeans, method = "gap_stat") #would put nstart=25 if ha
 ```
 
 ```{r}
-clustered_customers1 <- kmeans(customers1, 2, nstart = 25)
+clustered_customers1 <- kmeans(customers1, 5, nstart = 25)
 
 clustered_customers1
 ```
