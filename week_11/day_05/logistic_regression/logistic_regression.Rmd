@@ -1,0 +1,51 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(janitor)
+```
+
+```{r}
+le <- read_csv("data/orange_juice.csv")
+
+le_new <- le %>% 
+  clean_names() %>% 
+  mutate(purchase_mm = purchase) %>% 
+  mutate(purchase_mm = ifelse(purchase_mm == "MM", TRUE, FALSE))
+le_new
+```
+```{r}
+summary(le_new)
+is.na(le_new)
+```
+
+
+```{r}
+
+
+le_new <- le_new %>%
+  filter(!is.na(total_ch))
+
+```
+
+
+```{r}
+library(GGally)
+
+split1 <- le_new %>% 
+  select(weekof_purchase, price_ch, price_mm, purchase_mm)
+
+
+ggpairs(split1)
+```
+
+
+```{r}
+le_new_logreg_model <- glm( ~purchase_mm + price_mm + price_ch, data = le_new, family = binomial(link = 'logit'))
+le_new_logreg_model
+```
+
+
